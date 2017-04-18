@@ -1,0 +1,25 @@
+{
+  "name": "webpack-bemjson-to-jsx-loader",
+  "version": "0.0.0",
+  "description": "BEMJSON loader that converts it to JSX",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Yeti-or/bemjson-to-jsx-loader.git"
+  },
+  "keywords": [
+    "bemjson",
+    "jsx",
+    "webpack",
+    "loader"
+  ],
+  "author": "Vasiliy Loginevskiy <yeti.or@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Yeti-or/bemjson-to-jsx-loader/issues"
+  },
+  "homepage": "https://github.com/Yeti-or/bemjson-to-jsx-loader#readme"
+}
