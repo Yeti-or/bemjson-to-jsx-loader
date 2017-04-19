@@ -22,6 +22,9 @@ ReactDOM.render(
 );
 `;
 
+const fs = require('fs');
+const is_debug = process.env.DEBUG || false;
+
 module.exports = function(source) {
     this.cacheable && this.cacheable();
     const callback = this.async();
@@ -48,6 +51,7 @@ module.exports = function(source) {
 
     new Promise((resolve, rej) => {
         const bemjson = nEval(source);
+        is_debug && fs.writeFileSync('/tmp/debug-bemjson.json', JSON.stringify(bemjson, null, 4));
 
         // whiteLists of entities on project level
         const whiteList = [];
@@ -106,6 +110,7 @@ module.exports = function(source) {
             const JSX = bemjsonToJSX().use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
             const res = reactTMPL(imports.join('\n'), JSX);
+            is_debug && fs.writeFileSync('/tmp/debug-jsx.html', res);
             resolve(res);
         });
     })
