@@ -103,7 +103,7 @@ module.exports = function(source) {
                     }
                 }
             };
-            const JSX = bemjsonToJSX().use([whiteListPlugin, ...plugins]).process(bemjson).JSX;
+            const JSX = bemjsonToJSX().use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
             const res = reactTMPL(imports.join('\n'), JSX);
             resolve(res);
