@@ -9,6 +9,7 @@ const BemEntity = require('@bem/entity-name');
 const bemWalk = require('@bem/walk');
 const through = require('through2');
 const loaderUtils = require('loader-utils');
+const pascalCase = require('pascal-case');
 
 const reactTMPL = (imports, JSX) =>
 `
@@ -80,7 +81,7 @@ module.exports = function(source) {
                 }, {});
 
             const imports = Object.keys(entities).map(k => {
-                const className = bemjsonToJSX.tagToClass(k);
+                const className = pascalCase(k);
                 return `import ${className} from '${bemImport.stringify(entities[k])}';`
             });
 
@@ -104,6 +105,8 @@ module.exports = function(source) {
                             // no js, no css
                             return '';
                         }
+                    } else {
+                        jsx.tag = pascalCase(jsx.tag);
                     }
                 }
             };
