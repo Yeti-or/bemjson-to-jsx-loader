@@ -99,7 +99,7 @@ module.exports = function(source) {
                             jsx.props.block = json.block;
                             json.mods && (jsx.props.mods = json.mods);
                             json.elem && (jsx.props.elem = json.elem);
-                            json.elemMods && (jsx.props.elemMods = json.elemMods);
+                            json.elemMods && (jsx.props.mods = json.elemMods);
                             jsx.bemEntity = new BemEntity({ block: 'bem' });
                         } else {
                             // no js, no css
