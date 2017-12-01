@@ -23,15 +23,19 @@
   },
   "homepage": "https://github.com/Yeti-or/bemjson-to-jsx-loader#readme",
   "dependencies": {
-    "@bem/cell": "^0.2.6",
     "@bem/entity-name": "^1.4.0",
     "@bem/import-notation": "^1.1.1",
+    "@bem/naming": "^2.0.0-6",
     "@bem/walk": "^1.0.0-2",
     "bemjson-to-decl": "^1.0.2",
-    "bemjson-to-jsx": "^1.0.0",
+    "bemjson-to-jsx": "^1.9.0",
     "loader-utils": "^1.1.0",
     "node-eval": "^1.1.0",
     "pascal-case": "^2.0.1",
     "through2": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1",
+    "eslint-config-pedant": "^1.0.0"
   }
 }

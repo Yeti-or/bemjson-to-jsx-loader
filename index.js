@@ -4,8 +4,8 @@ const bemImport = require('@bem/import-notation');
 const bemjsonToDecl = require('bemjson-to-decl');
 const bemjsonToJSX = require('bemjson-to-jsx');
 const nEval = require('node-eval');
-const Cell = require('@bem/cell');
 const BemEntity = require('@bem/entity-name');
+const naming = require('@bem/naming');
 const bemWalk = require('@bem/walk');
 const through = require('through2');
 const loaderUtils = require('loader-utils');
@@ -36,8 +36,9 @@ module.exports = function(source) {
     );
     const levels = options.levels;
     const techs = options.techs || ['js'];
-    const plugins = options.bemjsonToJSXPlugins || [];
     const bemPath = options.bemPath;
+    const plugins = options.bemjsonToJSXPlugins || [];
+    const bJSXopts = options.bemjsonToJSXOptions || {};
     const techMap = techs.reduce((acc, tech) => {
         acc[tech] || (acc[tech] = [tech]);
         return acc;
@@ -48,7 +49,10 @@ module.exports = function(source) {
         });
         return acc;
     }, {});
-
+    const defImportResolver = (className, entity, entities) => {
+        return [`import ${className} from '${bemImport.stringify(entities)}';`];
+    };
+    const importResolver = options.bemjsonToJSXImportResolver || defImportResolver;
 
     new Promise((resolve, rej) => {
         const bemjson = nEval(source);
@@ -70,20 +74,22 @@ module.exports = function(source) {
         walk.on('error', err => rej(err));
         walk.on('end', () => {
 
-            const entities = bemjsonToDecl.convert(bemjson)
-                .map(Cell.create)
-                .filter(cell => whiteList.some(white => cell.entity.isEqual(white)))
-                .reduce((acc, cell) => {
-                    // group by block and elems
-                    const classId = cell.elem ? cell.block + '__' + cell.elem : cell.block;
-                    (acc[classId] || (acc[classId] = [])).push(cell);
-                    return acc;
-                }, {});
+            const imports = [];
 
-            const imports = Object.keys(entities).map(k => {
-                const className = pascalCase(k);
-                return `import ${className} from '${bemImport.stringify(entities[k])}';`
-            });
+            bemjsonToDecl.convert(bemjson)
+                .map(BemEntity.create)
+                .filter(entity => whiteList.some(white => entity.isEqual(white)))
+                .reduce((acc, entity) => {
+                    // group by block and elems
+                    const entityId = BemEntity.create({ block: entity.block, elem: entity.elem }).toString();
+                    acc.has(entityId) ? acc.get(entityId).push(entity) : acc.set(entityId, [entity]);
+                    return acc;
+                }, new Map())
+                .forEach((entities, entityId) => {
+                    const entity = naming.parse(entityId);
+                    const className = pascalCase(entityId);
+                    imports.push(...importResolver(className, entity, entities));
+                });
 
             bemPath && imports.push(`import Bem from '${bemPath}';`);
 
@@ -110,7 +116,7 @@ module.exports = function(source) {
                     }
                 }
             };
-            const JSX = bemjsonToJSX().use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
+            const JSX = bemjsonToJSX(bJSXopts).use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
             const res = reactTMPL(imports.join('\n'), JSX);
             is_debug && fs.writeFileSync('/tmp/debug-jsx.html', res);
