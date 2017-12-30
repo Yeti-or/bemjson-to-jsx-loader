@@ -1,6 +1,6 @@
 {
   "name": "webpack-bemjson-to-jsx-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "BEMJSON loader that converts it to JSX",
   "main": "index.js",
   "scripts": {
