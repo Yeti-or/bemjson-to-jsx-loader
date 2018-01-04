@@ -107,6 +107,10 @@ module.exports = function(source) {
                             json.elem && (jsx.props.elem = json.elem);
                             json.elemMods && (jsx.props.mods = json.elemMods);
                             jsx.bemEntity = new BemEntity({ block: 'bem' });
+
+                            // Fix it with knownComponents: #issues/6
+                            jsx.props.style &&
+                                (jsx.props.attrs = Object.assign({ 'style' : jsx.props.style }, jsx.props.attrs));
                         } else {
                             // no js, no css
                             return '';
