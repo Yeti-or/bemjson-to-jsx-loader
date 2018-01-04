@@ -107,10 +107,6 @@ module.exports = function(source) {
                             json.elem && (jsx.props.elem = json.elem);
                             json.elemMods && (jsx.props.mods = json.elemMods);
                             jsx.bemEntity = new BemEntity({ block: 'bem' });
-
-                            // Fix it with knownComponents: #issues/6
-                            jsx.props.style &&
-                                (jsx.props.attrs = Object.assign({ 'style' : jsx.props.style }, jsx.props.attrs));
                         } else {
                             // no js, no css
                             return '';
@@ -119,6 +115,9 @@ module.exports = function(source) {
                         jsx.tag = pascalCase(jsx.tag);
                     }
                 }
+                // Fix it with knownComponents: #issues/6 and updating on bem-react-core <= 1.0.0
+                jsx.props.style &&
+                    (jsx.props.attrs = Object.assign({ 'style' : jsx.props.style }, jsx.props.attrs));
             };
             const JSX = bemjsonToJSX(bJSXopts).use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
