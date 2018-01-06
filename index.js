@@ -107,6 +107,11 @@ module.exports = function(source) {
                             json.elem && (jsx.props.elem = json.elem);
                             json.elemMods && (jsx.props.mods = json.elemMods);
                             jsx.bemEntity = new BemEntity({ block: 'bem' });
+
+                            // Fix it with knownComponents: #issues/6
+                            if (json.attrs && typeof json.attrs === 'object' && !Array.isArray(json.attrs)) {
+                                jsx.props.attrs = Object.assign({}, json.attrs);
+                            }
                         } else {
                             // no js, no css
                             return '';
@@ -117,7 +122,7 @@ module.exports = function(source) {
                 }
                 // Fix it with knownComponents: #issues/6 and updating on bem-react-core <= 1.0.0
                 jsx.props.style &&
-                    (jsx.props.attrs = Object.assign({ 'style' : jsx.props.style }, jsx.props.attrs));
+                    (jsx.props.attrs = Object.assign({}, jsx.props.attrs, { 'style' : jsx.props.style }));
             };
             const JSX = bemjsonToJSX(bJSXopts).use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
