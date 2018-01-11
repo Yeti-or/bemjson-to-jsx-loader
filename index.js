@@ -93,7 +93,7 @@ module.exports = function(source) {
 
             bemPath && imports.push(`import Bem from '${bemPath}';`);
 
-            const whiteListPlugin = function(jsx, json) {
+            const whiteListPlugin = function(jsx) {
                 // Plugin to fullfill css-only blocks
                 if
                 (
