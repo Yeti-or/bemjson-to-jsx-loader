@@ -95,35 +95,24 @@ module.exports = function(source) {
 
             const whiteListPlugin = function(jsx, json) {
                 // Plugin to fullfill css-only blocks
-                if (jsx.bemEntity) {
-                    if (!jsList.some(white => jsx.bemEntity.isEqual(white))) {
-                        if (
-                            bemPath &&
-                            cssList.some(white => jsx.bemEntity.isEqual(white) || jsx.bemEntity.belongsTo(white))
-                        ) {
-                            jsx.tag = 'bem';
-                            jsx.props.block = json.block;
-                            json.mods && (jsx.props.mods = json.mods);
-                            json.elem && (jsx.props.elem = json.elem);
-                            json.elemMods && (jsx.props.mods = json.elemMods);
-                            jsx.bemEntity = new BemEntity({ block: 'bem' });
-
-                            // Fix it with knownComponents: #issues/6
-                            if (json.attrs && typeof json.attrs === 'object' && !Array.isArray(json.attrs)) {
-                                jsx.props.attrs = Object.assign({}, json.attrs);
-                            }
-                        } else {
-                            // no js, no css
-                            return '';
-                        }
-                    } else {
-                        jsx.tag = pascalCase(jsx.tag);
-                    }
+                if
+                (
+                    jsx.bemEntity &&
+                    !jsList.some(white => jsx.bemEntity.isEqual(white)) &&
+                    !cssList.some(white =>
+                        jsx.bemEntity.isEqual(white) || jsx.bemEntity.belongsTo(white)
+                    )
+                ) {
+                    // no js, no css
+                    return '';
                 }
-                // Fix it with knownComponents: #issues/6 and updating on bem-react-core <= 1.0.0
-                jsx.props.style &&
-                    (jsx.props.attrs = Object.assign({}, jsx.props.attrs, { 'style' : jsx.props.style }));
             };
+
+            if (bemPath) {
+                bJSXopts.knownComponents = [].concat(jsList);
+                bJSXopts.useSimpleComponent = true;
+            }
+
             const JSX = bemjsonToJSX(bJSXopts).use([whiteListPlugin].concat(plugins)).process(bemjson).JSX;
 
             const res = reactTMPL(imports.join('\n'), JSX);
