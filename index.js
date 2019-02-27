@@ -29,9 +29,12 @@ const is_debug = process.env.DEBUG || false;
 module.exports = function(source) {
     this.cacheable && this.cacheable();
     const callback = this.async();
+    const bemLoaderOptions = this.options
+        ? this.options.bemLoader
+        : {};
 
     const options = Object.assign({},
-        this.options.bemLoader,
+        bemLoaderOptions,
         loaderUtils.getOptions(this)
     );
     const levels = options.levels;
